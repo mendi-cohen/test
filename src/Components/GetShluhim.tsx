@@ -6,6 +6,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+
+
 
 const idList: number[] = [
     424,
@@ -34,6 +38,21 @@ interface ShaliachData {
 
 export default function BasicTable() {
     const [data, setData] = useState<ShaliachData[]>([]);
+    const [isDarkMode, setIsDarkMode] = useState(false);  
+
+    const currentTheme = createTheme({
+
+        palette: {
+            mode: isDarkMode ? 'dark' : 'light',
+            primary: {
+                 main: isDarkMode ? '#1976d2' : '#2196f3'
+            },
+            secondary: {
+                main: isDarkMode ? '#dc004e' : '#f50057',
+            },
+        },
+
+    });
 
     async function getShluhim() {
         try {
@@ -48,10 +67,9 @@ export default function BasicTable() {
                             },
                         }
                     );
-                   
-                     const data = await response.json();
-                     console.log(data);
-                     return data;
+
+                    const data = await response.json();
+                    return data;
                 })
             );
             setData(results);
@@ -64,29 +82,43 @@ export default function BasicTable() {
     }, []);
 
 
-    return (
-        <>
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Shaliach</TableCell>
-                        <TableCell>Branch</TableCell>
-                        <TableCell>Public Name</TableCell>
-                    </TableRow>
 
-                </TableHead>
-                <TableBody>
-                    {data.map((row) => (
-                        <TableRow key={row.shaliach}>
-                            <TableCell>{row.shaliach}</TableCell>
-                            <TableCell>{row.branch}</TableCell>
-                            <TableCell>{row.publicName}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-        </>
+    return (
+        <ThemeProvider theme={currentTheme}>
+            <div>
+            <Button 
+                    variant="contained" 
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    sx={{ 
+                        backgroundColor: isDarkMode ? 'yellow' : 'blue',
+                        color: isDarkMode ? 'black' : 'white',
+                        margin: '10px'
+                    }}
+                >
+                    {isDarkMode ? 'מצב יום' : 'מצב לילה'}
+                </Button>
+
+                <TableContainer component={Paper} dir='rtl'>
+                    <Table sx={{ minWidth: 650, backgroundColor: currentTheme.palette.secondary.main, fontFamily: currentTheme.typography.fontFamily }} aria-label="simple table">
+                        <TableHead sx={{ backgroundColor: currentTheme.palette.primary.main }}>
+                            <TableRow>
+                                <TableCell>שם השליח</TableCell>
+                                <TableCell>מקום השליחות</TableCell>
+                                <TableCell>Public Name</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {data.map((row) => (
+                                <TableRow key={row.shaliach}>
+                                    <TableCell>{row.shaliach}</TableCell>
+                                    <TableCell>{row.branch}</TableCell>
+                                    <TableCell>{row.publicName}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
+        </ThemeProvider>
     )
 }
