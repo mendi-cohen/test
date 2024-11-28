@@ -56,7 +56,7 @@ export default function BasicTable() {
 
     async function getShluhim() {
         try {
-            const results = await Promise.all(
+            const results = await Promise.allSettled(
                 idList.map(async (id) => {
                     const response = await fetch(
                         `https://sm-dashboard-production.up.railway.app/api/pub/shluchim/${id}`,
@@ -72,7 +72,7 @@ export default function BasicTable() {
                     return data;
                 })
             );
-            setData(results);
+            setData(results.map((result) => result.status === 'fulfilled' ? result.value : null));
         } catch (error) {
             console.error("Error fetching data:", error);
         }
