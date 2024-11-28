@@ -1,10 +1,10 @@
 import './App.css'
-import GetShluhim from './Components/GetShluhim';
+import GetShluhim from "./Components/GetShluhim";
 function App() {
 
   return (
     <>
-    <GetShluhim/>
+      <GetShluhim />
     </>
   )
 }
